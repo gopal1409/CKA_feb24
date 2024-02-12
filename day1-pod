@@ -24,5 +24,5 @@ kubectl get pod kucc1 -o yaml
 ####how to loging inside a specific container check the name of the container
  61  kubectl exec -it kucc1 -c kucc1 -- /bin/bash
   
-   63  kubectl exec -it consul -c consul sh
+   63  kubectl exec -it kucc1 -c consul sh
 
