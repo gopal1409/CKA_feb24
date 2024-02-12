@@ -20,3 +20,9 @@ kubectl replace -f pod.yml --force
 ####it will delete the older pod and create a new one
 ####how to get the output of a running pod
 kubectl get pod kucc1 -o yaml
+
+####how to loging inside a specific container check the name of the container
+ 61  kubectl exec -it kucc1 -c kucc1 -- /bin/bash
+  
+   63  kubectl exec -it kucc1 -c consul sh
+
