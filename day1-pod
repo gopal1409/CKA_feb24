@@ -1,0 +1,16 @@
+###create a pod with the name kucc1 container image as nginx create another container with image as consul port 8500 the container name should be consul
+   40  kubectl run kucc1 --image=nginx --port=80 --dry-run=client -o yaml > pod.yml
+   41  cat pod.yml
+   42  vi pod.yml
+   43  kubectl apply -f pod.yml
+   44  kubectl get pod
+   45  kubectl describe pod kucc1
+  ###seee the error 
+   46  vi pod.yml
+  ###go to hub.docker.com check the version of the consul image and replace it and reapply it
+   47  kubectl apply -f pod.yml
+   48  kubectl describe pod kucc1
+   49  kubectl get pod
+  ##again change the version replace it and reapply it
+   50  kubectl edit pod kucc1
+   51  kubectl get pod
