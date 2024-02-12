@@ -26,3 +26,11 @@ kubectl get pod kucc1 -o yaml
   
    63  kubectl exec -it kucc1 -c consul sh
 
+###kubec tl replace the pod from older to new configuration
+ 67  kubectl get pod kucc1 -o yaml
+   68  kubectl get pod kucc1 -o yaml > uidpod.yml
+   69  vi uidpod.yml
+   70  kubectl replace -f uidpod.yml --force
+   71  cat uidpod.yml
+
+
