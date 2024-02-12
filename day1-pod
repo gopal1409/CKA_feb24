@@ -14,3 +14,7 @@
   ##again change the version replace it and reapply it
    50  kubectl edit pod kucc1
    51  kubectl get pod
+
+####if you get an error pod update forbiden
+kubectl replace -f pod.yml --force
+####it will delete the older pod and create a new one
