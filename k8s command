@@ -18,4 +18,9 @@ kubeadm token create --print-join-command
 ###lets check the config file
 /root/.kube
 cat config
-
+####how to reset a node
+20  kubeadm reset
+   21  rm -rf /etc/cni/net.d/
+   22  rm -rf $HOME/.kube/config
+   23  systemctl restart kubelet
+   24  systemctl restart containerd
