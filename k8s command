@@ -1,0 +1,11 @@
+#####getting mode infomation about the nodes
+ 3  kubectl get nodes
+11  kubectl get nodes -o wide
+   12  kubectl get nodes
+   13  kubectl describe nodes k8smaster
+###comparing pod with containers
+    4  kubectl get pod -A
+    
+    6  crictl ps
+    9  crictl images
+   
