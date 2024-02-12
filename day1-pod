@@ -18,3 +18,5 @@
 ####if you get an error pod update forbiden
 kubectl replace -f pod.yml --force
 ####it will delete the older pod and create a new one
+####how to get the output of a running pod
+kubectl get pod kucc1 -o yaml
