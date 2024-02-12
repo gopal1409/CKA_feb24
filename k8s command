@@ -12,4 +12,7 @@
 kubeadm token create --print-join-command
 ####paste the output in worker node
 ###to verify you need to run this in master
-kubectl get nodes
+  21  kubectl get nodes
+   22  kubectl get pod -A
+   23  kubectl get pod -A -o wide
+
