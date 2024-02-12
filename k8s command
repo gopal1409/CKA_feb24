@@ -15,4 +15,7 @@ kubeadm token create --print-join-command
   21  kubectl get nodes
    22  kubectl get pod -A
    23  kubectl get pod -A -o wide
+###lets check the config file
+/root/.kube
+cat config
 
