@@ -1,0 +1,9 @@
+kubectl create ns test
+135  kubectl -n test create deployment nginx-deployment --image=nginx --port=80 --dry-run=client -o yaml > dep.yml
+  ##before applying increase the replicaset to 3
+  136  vi dep.yml
+  137  kubectl apply -f dep.yml
+  ####the below command will now show you the deployment as it is created in a namespace
+  138  kubectl get deployment
+  139  kubectl get deployment -n test
+    141  kubectl get pod -n test
