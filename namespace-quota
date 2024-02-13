@@ -1,0 +1,52 @@
+###lets create our namespace
+94  kubectl get ns
+   95  kubectl create ns dev
+   96  kubectl get ns
+   97  kubectl describe ns dev
+###lets create the quota
+   98  vi quota.yml
+#############manifest file for quota
+apiVersion: v1
+kind: ResourceQuota 
+metadata: 
+  name: mem-cpu-demo
+  namespace: dev 
+spec: 
+  hard: 
+    requests.cpu: "1" ##every pod can go max 1 core processor
+    requests.memory: 1Gi #800Mi
+    limits.cpu: "2" #inside dev namespace we have max 2 core processor
+    limits.memory: 2Gi #max memory 2GB
+#####################################################
+   99  kubectl apply -f quota.yml
+  100  kubectl describe ns dev
+###lets create a pod with quota
+ kubectl -n dev run quota-me-cpu --image=nginx --port=80 --dry-run=client -o yaml > q1.yml
+#################
+vi q1.yml
+#########################################manifest file for quota
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: quota-me-cpu
+  name: quota-me-cpu
+  namespace: dev
+spec:
+  containers:
+  - image: nginx
+    name: quota-me-cpu
+    ports:
+    - containerPort: 80
+    resources:
+      limits:
+        memory: "800Mi"
+        cpu: "800m"
+      requests:
+        memory: "600Mi"
+        cpu: "400m"
+########################################apply it
+  109  kubectl apply -f q1.yml
+####now describe will show you the util,ziation
+  110  kubectl describe ns dev
