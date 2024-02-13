@@ -50,3 +50,5 @@ spec:
   109  kubectl apply -f q1.yml
 ####now describe will show you the util,ziation
   110  kubectl describe ns dev
+####
+ kubectl apply -f q1.yml --namespace=dev
