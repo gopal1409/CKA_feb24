@@ -1,0 +1,15 @@
+###run my pod in worker node
+ 76  kubectl run my-first-pod --image=nginx --port=80 --dry-run=client -o yaml > pod1.yml
+   77  kubectl apply -f pod1.yml
+   78  kubectl get pod
+   79  kubectl get pod -o wide
+#########i want to run my pod by default in the master node. if i enable scheduling
+##forcefully i want to run the pod in master node
+1. nodeselector
+2. 
+####lets schedule the pod inside my master machine we need to find the master machine all the pod configuration file
+cd /etc/kubernetes/manifests
+ 87  kubectl run my-master-pod --image=nginx --port=80 --dry-run=client -o yaml > pod1.yml
+   88  ls
+   89  kubectl get pod
+   90  kubectl get pod -o wide
