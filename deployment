@@ -15,3 +15,23 @@ kubectl create ns test
   151  kubectl describe rs nginx-deployment-7fffdb88fd -n test
   152  kubectl get pod -n test
   153  kubectl describe pod nginx-deployment-7fffdb88fd-7zvg4 -n test
+###update and rollback
+ 175  kubectl -n test set image deploy nginx-deployment nginx=nginx
+  176  kubectl -n test rollout status deploy nginx-deployment
+  177  kubectl -n test set image deploy nginx-deployment nginx=nginx:1.161
+##press control c to come out of the execution
+  178  kubectl -n test rollout status deploy nginx-deployment
+##press control c to come out of the execution
+
+  179  kubectl get rs -n test
+  
+  181  kubectl-n test get  rs nginx-deployment-b78cb7f6f
+  182  kubectl -n test describe  rs nginx-deployment-b78cb7f6f
+  183  kubectl -n test get pod
+ 
+  186  kubectl -n test describe pod nginx-deployment-b78cb7f6f-64nbc
+#Rollback
+  187  kubectl -n test rollout undo deploy nginx-deployment
+  188  kubectl -n test rollout history deployment
+  189  kubectl -n test rollout history deployment nginx-deployment --revision=2
+
