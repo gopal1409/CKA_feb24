@@ -19,3 +19,12 @@ containers:
 ####from the pod label name=cpu-utlizer find pods running high cpu woprkload and write the name of the pod consuming most CPU to a file
 /opt/kutroo1/kutr001.sh
 kubectl top pod -l name=cpu-utlizer > /opt/kutroo1/kutr001.sh
+
+#####hpa
+ 224  kubectl get deploy
+  225  kubectl create deploy nginx-deploy --image=nginx --port=80
+  226  kubectl get deploy
+  227  kubectl autoscale deploy nginx-deploy --min=5 --max=10 --cpu-percent=30
+  228  kubectl get deploy
+  229  kubectl get hpa
+
