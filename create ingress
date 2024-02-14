@@ -11,3 +11,34 @@
   322  kubectl run payment --image=httpd
   324  kubectl expose pod cart --port=80 --name=cartservice
   325  kubectl expose pod payment --port=80 --name=paymentservice
+####there is a service running you need to add the service into your ingress controler with a class name=testclass
+vi ingress.yml
+############################################
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /cart
+        pathType: Prefix
+        backend:
+          service:
+            name: cartservice
+            port:
+              number: 80
+      - path: /payment
+        pathType: Prefix
+        backend:
+          service:
+            name: paymentservice
+            port:
+              number: 80
+##########################
+345  kubectl apply -f ingress.yml
+  346  kubectl get ingressclass
