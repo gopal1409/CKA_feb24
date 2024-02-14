@@ -4,6 +4,10 @@ kubectl top nodes
 ###we will install metrics server
  201  kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
   202  kubectl get pod -A
+####to check why my pod is not running
+ 213  kubectl -n kube-system logs metrics-server-5dcdc6fffb-5v22z
+  214  kubectl -n kube-system logs -f metrics-server-5dcdc6fffb-5v22z
+
 ####add insecure tls inside the running configuration file
  206  kubectl -n kube-system edit deploy metrics-server
 ##########add the first line and save it insecure tls
