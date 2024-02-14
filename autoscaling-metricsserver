@@ -1,3 +1,7 @@
 ####lets use the top command with kubectl to get the utilziation report of pod and nodes
 kubectl top pod
 kubectl top nodes
+###we will install metrics server
+ 201  kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+  202  kubectl get pod -A
+
