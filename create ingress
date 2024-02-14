@@ -1,0 +1,8 @@
+##3lets deploy the ingress controller
+ 627  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.6.4/deploy/static/provider/cloud/deploy.yaml
+  628  kubectl get ns
+  629  kubectl get pods --namespace=ingress-nginx
+    ####the below command will give you the port number of nginx in gress controller. copy the second machine ip : port number you will see the ingress test page. 
+  630  kubectl get svc -A
+####delete the validation web hook as we dont have the ssl certificate we have it but unsigned
+       665  kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission
