@@ -4,4 +4,12 @@ kubectl top nodes
 ###we will install metrics server
  201  kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
   202  kubectl get pod -A
+####add insecure tls inside the running configuration file
+ 206  kubectl -n kube-system edit deploy metrics-server
+##########add the first line and save it insecure tls
+containers:
+      - args:
+        - --cert-dir=/tmp
+        - --secure-port=10250
+        - --kubelet-insecure-tls
 
