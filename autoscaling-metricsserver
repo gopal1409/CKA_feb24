@@ -36,3 +36,7 @@ expose the app and utilzied
  252  ab -n 9050000 -c 100 http://20.42.101.10:30150/
 ###internally also you can use the same
 kubectl run apache-bench1 -i --tty --rm --image=httpd -- ab -n 5000 http://20.42.101.10:30150
+
+###increase the replica count of an existing deployment by 3
+kubectl scale deploy nginx-deploy --replicas=2
+
