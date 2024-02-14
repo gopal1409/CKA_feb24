@@ -1,0 +1,10 @@
+  278  kubectl run red --image=nginx
+  279  kubectl run blue --image=nginx
+  280  kubectl get pod
+  281  kubectl expose pod blue
+  282  kubectl expose pod blue --port=80
+  283  kubectl expose pod red --port=80
+  284  kubectl get svc
+  285  kubectl get pod -o wide
+  286  kubectl exec -it red curl 192.168.1.29
+  287  kubectl exec -it blue curl 192.168.1.28
