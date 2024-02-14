@@ -1,0 +1,3 @@
+####lets use the top command with kubectl to get the utilziation report of pod and nodes
+kubectl top pod
+kubectl top nodes
