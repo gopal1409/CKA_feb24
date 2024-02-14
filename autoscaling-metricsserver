@@ -27,6 +27,9 @@ kubectl top pod -l name=cpu-utlizer > /opt/kutroo1/kutr001.sh
   227  kubectl autoscale deploy nginx-deploy --min=5 --max=10 --cpu-percent=30
   228  kubectl get deploy
   229  kubectl get hpa
+##3how to install apahce utils
+ apt install apache2-utils
+
 ##to test using apache bench
 expose the app and utilzied
 
