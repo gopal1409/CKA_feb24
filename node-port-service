@@ -1,0 +1,15 @@
+ 294  kubectl create deploy nginx --image=nginx
+  295  kubectl get deploy
+  296  kubectl edit deploy nginx
+  297  kubectl get pod -o wide
+  298  kubectl expose deploy nginx --type=NodePort --port=80 --name=nginxservice
+  299  kubectl get svc
+  300  kubectl describe svc nginxservice
+ ###modify the lable in selecto column at the end in place of nginx put nginx1
+  303  kubectl edit svc nginxservice
+####bewlow describe command will show you all the endpoint is gone
+  304  kubectl describe svc nginxservice
+###change the lable to original nginx
+  305  kubectl edit svc nginxservice
+###again the below command will show all the pod as endpoint is connected
+  306  kubectl describe svc nginxservice
