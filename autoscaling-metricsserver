@@ -27,4 +27,9 @@ kubectl top pod -l name=cpu-utlizer > /opt/kutroo1/kutr001.sh
   227  kubectl autoscale deploy nginx-deploy --min=5 --max=10 --cpu-percent=30
   228  kubectl get deploy
   229  kubectl get hpa
+##to test using apache bench
+expose the app and utilzied
 
+ 252  ab -n 9050000 -c 100 http://20.42.101.10:30150/
+###internally also you can use the same
+kubectl run apache-bench1 -i --tty --rm --image=httpd -- ab -n 5000 http://20.42.101.10:30150
