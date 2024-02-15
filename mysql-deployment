@@ -1,0 +1,57 @@
+415  vi mysql.yml
+##########
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql 
+  template:
+    metadata:
+      labels:
+        app: mysql 
+    spec:
+      containers:
+      - name: mysql 
+        image: mysql:5.6
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-db-password
+              key: password
+          ###to this environment varaible we will call the secret manager in k8s
+        ports:
+        - containerPort: 3306
+        volumeMounts: ##this volume is defination is there inside your container
+          - name: mysql-data-1
+            mountPath: /var/lib/mysql
+          - name: db-script
+            mountPath: /docker-entrypoint-initdb.d
+      volumes: #this is specification of volume need to be mounted with pvc
+        - name: mysql-data-1 #this should match with line 28 container volume name
+          persistentVolumeClaim: 
+            claimName: task-pv-claim     
+        - name: db-script
+          configMap:
+            name: user-data-script
+    ####configmap has a size of 1Mb volume   
+
+
+  416  kubectl apply -f mysql.yml
+  417  kubectl get deploy
+  418  kubectl describe deploy mysql
+  419  kubectl get pod
+  420  kubectl exec -it mysql-8b78dd9fc-8md42 -- /bin/bash
+  ##once you loging the password is dbpassword11
+  mysql -u root -p
+  show databases;
+  @######it will show the webappdb
+  ##then create a dAtabase 
+  #####login to the node machine check the 
+  cd /mnt/data
+  ls
+  ####here you can see the folders of datbaase
