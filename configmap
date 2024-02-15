@@ -1,0 +1,14 @@
+ 406  vi configmap.yml
+   ###lets add it
+apiVersion: v1 
+kind: ConfigMap
+metadata:
+  name: user-data-script
+data:
+  mysql_usermgmt.sql: |-
+    DROP DATABASE IF EXISTS webappdb;
+    CREATE DATABASE webappdb;
+
+  407  kubectl apply -f configmap.yml
+  408  kubectl get configmap
+  409  kubectl describe configmap user-data-scrip
