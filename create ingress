@@ -42,3 +42,11 @@ spec:
 ##########################
 345  kubectl apply -f ingress.yml
   346  kubectl get ingressclass
+##exam question related to ingress
+###3create a new ingress resource as follow
+	1. Name: Ping
+	2. Namespace: Ing-internal
+	3. Expose service hello on path /hello using service port 5678
+################################using dry run i can create
+ kubectl create ing ping -n ing-internal  --rule="/hello*=hello:5678" --annotation=nginx.ingress.kubernetes.io/rewrite-target=/ --dry-run=client -o yaml > ing-ingress.yml
+cat ing-ingress.yml
