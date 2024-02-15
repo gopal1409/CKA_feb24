@@ -5,7 +5,7 @@ sudo -i
 mkdir /mnt/data
 ls
 ############################
-####lets create the pv
+####lets create the pv from master node
 vi pv.yml
 #########################
 apiVersion: v1 
