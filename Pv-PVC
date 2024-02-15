@@ -29,6 +29,6 @@ spec:
   363  kubectl get pv
   364  kubectl describe pv task-pv-volume
 ##question for exam
-create a persistent volume with the name app-data, of capacity 2Gi and access mode ReadOnlyMany. The type of volume hostPath and its location is /srv/app-data
+create a persistent volume with the name app-data, of capacity 2Gi and access mode ReadWriteMany. The type of volume hostPath and its location is /srv/app-data
 ###to do this exercise open kubernetes.io
 configure a pod to use a persistentvolume for storage
