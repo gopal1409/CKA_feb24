@@ -1,0 +1,7 @@
+###lets create a persistent volume
+###to do the same we will create an directory
+###login to the second machine
+sudo -i
+mkdir /mnt/data
+ls
+############################
