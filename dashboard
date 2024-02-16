@@ -1,0 +1,8 @@
+###how to deploy a dashboard
+   506  kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+  507  kubectl get pod -A
+  508  kubectl get svc -A
+##change the clusterIP to NodePort
+  511  kubectl-n kubernetes-dashboard edit svc kubernetes-dashboard
+  512  kubectl get svc -A
+#####copy the node machine ip and try to access the same using browser.
