@@ -1,0 +1,68 @@
+A headless service doesn't provide any sort of proxy or load balancing -- it simply provides a mechanism by which clients can look up the ip address of pods. This means that when they connect to your service, they're connecting directly to the pods; there's no intervening proxy.
+
+Consider a situation in which you have a service that matches three pods; e.g., I have this Deployment:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: example
+  name: example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      containers:
+      - image: docker.io/traefik/whoami:latest
+        name: whoami
+        ports:
+        - containerPort: 80
+          name: http
+If I'm using a typical ClusterIP type service, like this:
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: example
+  name: example
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  selector:
+    app: example
+Then when I look up the service in a client pod, I will see the ip address of the service proxy:
+
+/ # host example
+example.default.svc.cluster.local has address 10.96.114.63
+However, when using a headless service, like this:
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: example
+  name: example-headless
+spec:
+  clusterIP: None
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  selector:
+    app: example
+I will instead see the addresses of the pods:
+
+/ # host example-headless
+example-headless.default.svc.cluster.local has address 10.244.0.25
+example-headless.default.svc.cluster.local has address 10.244.0.24
+example-headless.default.svc.cluster.local has address 10.244.0.23
+By removing the proxy from the equation, clients are aware of the actual pod ips, which may be important for some applications. This also simplifies the path between clients and the service, which may have performance benefits.
