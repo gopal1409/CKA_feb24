@@ -185,6 +185,391 @@ kube-system       coredns-5644d7b6d9-vwm7g                  ...          68m
 project-c13       c13-3cc-runner-heavy-5486d76dd4-ddvlt     ...          63m
 project-hamster   web-hamster-shop-849966f479-278vp         ...          63m
 project-c13       c13-3cc-web-646b6c8756-qsg4b              ...          63m
+
+Question 6 | Storage, PV, PVC, Pod volume
+Task weight: 8%
+
  
+
+Use context: kubectl config use-context k8s-c1-H
+
+ 
+
+Create a new PersistentVolume named safari-pv. It should have a capacity of 2Gi, accessMode ReadWriteOnce, hostPath /Volumes/Data and no storageClassName defined.
+
+Next create a new PersistentVolumeClaim in Namespace project-tiger named safari-pvc . It should request 2Gi storage, accessMode ReadWriteOnce and should not define a storageClassName. The PVC should bound to the PV correctly.
+
+Finally create a new Deployment safari in Namespace project-tiger which mounts that volume at /tmp/safari-data. The Pods of that Deployment should be of image httpd:2.4.41-alpine.
+
+ 
+
+Answer
+vim 6_pv.yaml
+Find an example from https://kubernetes.io/docs and alter it:
+
+# 6_pv.yaml
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+ name: safari-pv
+spec:
+ capacity:
+  storage: 2Gi
+ accessModes:
+  - ReadWriteOnce
+ hostPath:
+  path: "/Volumes/Data"
+Then create it:
+
+k -f 6_pv.yaml create
+Next the PersistentVolumeClaim:
+
+vim 6_pvc.yaml
+Find an example from https://kubernetes.io/docs and alter it:
+
+# 6_pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: safari-pvc
+  namespace: project-tiger
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+     storage: 2Gi
+Then create:
+
+k -f 6_pvc.yaml create
+And check that both have the status Bound:
+
+➜ k -n project-tiger get pv,pvc
+NAME                         CAPACITY  ... STATUS   CLAIM                    ...
+persistentvolume/safari-pv   2Gi       ... Bound    project-tiger/safari-pvc ...
+
+NAME                               STATUS   VOLUME      CAPACITY ...
+persistentvolumeclaim/safari-pvc   Bound    safari-pv   2Gi      ...
+Next we create a Deployment and mount that volume:
+
+k -n project-tiger create deploy safari \
+  --image=httpd:2.4.41-alpine $do > 6_dep.yaml
+
+vim 6_dep.yaml
+Alter the yaml to mount the volume:
+
+# 6_dep.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: safari
+  name: safari
+  namespace: project-tiger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: safari
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: safari
+    spec:
+      volumes:                                      # add
+      - name: data                                  # add
+        persistentVolumeClaim:                      # add
+          claimName: safari-pvc                     # add
+      containers:
+      - image: httpd:2.4.41-alpine
+        name: container
+        volumeMounts:                               # add
+        - name: data                                # add
+          mountPath: /tmp/safari-data               # add
+k -f 6_dep.yaml create
+We can confirm it's mounting correctly:
+
+➜ k -n project-tiger describe pod safari-5cbf46d6d-mjhsb  | grep -A2 Mounts:   
+    Mounts:
+      /tmp/safari-data from data (rw) # there it is
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-n2sjj (ro)
+ 
+
+ 
+
+Question 7 | Node and Pod Resource Usage
+Task weight: 1%
+
+ 
+
+Use context: kubectl config use-context k8s-c1-H
+
+ 
+
+The metrics-server has been installed in the cluster. Your college would like to know the kubectl commands to:
+
+show Nodes resource usage
+show Pods and their containers resource usage
+Please write the commands into /opt/course/7/node.sh and /opt/course/7/pod.sh.
+
+ 
+
+Answer:
+The command we need to use here is top:
+
+➜ k top -h
+Display Resource (CPU/Memory/Storage) usage.
+
+ The top command allows you to see the resource consumption for nodes or pods.
+
+ This command requires Metrics Server to be correctly configured and working on the server.
+
+Available Commands:
+  node        Display Resource (CPU/Memory/Storage) usage of nodes
+  pod         Display Resource (CPU/Memory/Storage) usage of pods
+We see that the metrics server provides information about resource usage:
+
+➜ k top node
+NAME               CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%   
+cluster1-controlplane1   178m         8%     1091Mi          57%       
+cluster1-node1   66m          6%     834Mi           44%       
+cluster1-node2   91m          9%     791Mi           41% 
+We create the first file:
+
+# /opt/course/7/node.sh
+kubectl top node
+For the second file we might need to check the docs again:
+
+➜ k top pod -h
+Display Resource (CPU/Memory/Storage) usage of pods.
+...
+Namespace in current context is ignored even if specified with --namespace.
+      --containers=false: If present, print usage of containers within a pod.
+      --no-headers=false: If present, print output without headers.
+...
+With this we can finish this task:
+
+# /opt/course/7/pod.sh
+kubectl top pod --containers=true
+ 
+
+ 
+
+Question 8 | Get Controlplane Information
+Task weight: 2%
+
+ 
+
+Use context: kubectl config use-context k8s-c1-H
+
+ 
+
+Ssh into the controlplane node with ssh cluster1-controlplane1. Check how the controlplane components kubelet, kube-apiserver, kube-scheduler, kube-controller-manager and etcd are started/installed on the controlplane node. Also find out the name of the DNS application and how it's started/installed on the controlplane node.
+
+Write your findings into file /opt/course/8/controlplane-components.txt. The file should be structured like:
+
+# /opt/course/8/controlplane-components.txt
+kubelet: [TYPE]
+kube-apiserver: [TYPE]
+kube-scheduler: [TYPE]
+kube-controller-manager: [TYPE]
+etcd: [TYPE]
+dns: [TYPE] [NAME]
+Choices of [TYPE] are: not-installed, process, static-pod, pod
+
+ 
+
+Answer:
+We could start by finding processes of the requested components, especially the kubelet at first:
+
+➜ ssh cluster1-controlplane1
+
+root@cluster1-controlplane1:~# ps aux | grep kubelet # shows kubelet process
+We can see which components are controlled via systemd looking at /etc/systemd/system directory:
+
+➜ root@cluster1-controlplane1:~# find /etc/systemd/system/ | grep kube
+/etc/systemd/system/kubelet.service.d
+/etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+/etc/systemd/system/multi-user.target.wants/kubelet.service
+
+➜ root@cluster1-controlplane1:~# find /etc/systemd/system/ | grep etcd
+This shows kubelet is controlled via systemd, but no other service named kube nor etcd. It seems that this cluster has been setup using kubeadm, so we check in the default manifests directory:
+
+➜ root@cluster1-controlplane1:~# find /etc/kubernetes/manifests/
+/etc/kubernetes/manifests/
+/etc/kubernetes/manifests/kube-controller-manager.yaml
+/etc/kubernetes/manifests/etcd.yaml
+/etc/kubernetes/manifests/kube-apiserver.yaml
+/etc/kubernetes/manifests/kube-scheduler.yaml
+(The kubelet could also have a different manifests directory specified via parameter --pod-manifest-path in it's systemd startup config)
+
+This means the main 4 controlplane services are setup as static Pods. Actually, let's check all Pods running on in the kube-system Namespace on the controlplane node:
+
+➜ root@cluster1-controlplane1:~# kubectl -n kube-system get pod -o wide | grep controlplane1
+coredns-5644d7b6d9-c4f68                            1/1     Running            ...   cluster1-controlplane1
+coredns-5644d7b6d9-t84sc                            1/1     Running            ...   cluster1-controlplane1
+etcd-cluster1-controlplane1                         1/1     Running            ...   cluster1-controlplane1
+kube-apiserver-cluster1-controlplane1               1/1     Running            ...   cluster1-controlplane1
+kube-controller-manager-cluster1-controlplane1      1/1     Running            ...   cluster1-controlplane1
+kube-proxy-q955p                                    1/1     Running            ...   cluster1-controlplane1
+kube-scheduler-cluster1-controlplane1               1/1     Running            ...   cluster1-controlplane1
+weave-net-mwj47                                     2/2     Running            ...   cluster1-controlplane1
+There we see the 5 static pods, with -cluster1-controlplane1 as suffix.
+
+We also see that the dns application seems to be coredns, but how is it controlled?
+
+➜ root@cluster1-controlplane1$ kubectl -n kube-system get ds
+NAME         DESIRED   CURRENT   ...   NODE SELECTOR            AGE
+kube-proxy   3         3         ...   kubernetes.io/os=linux   155m
+weave-net    3         3         ...   <none>                   155m
+
+➜ root@cluster1-controlplane1$ kubectl -n kube-system get deploy
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+coredns   2/2     2            2           155m
+Seems like coredns is controlled via a Deployment. We combine our findings in the requested file:
+
+# /opt/course/8/controlplane-components.txt
+kubelet: process
+kube-apiserver: static-pod
+kube-scheduler: static-pod
+kube-controller-manager: static-pod
+etcd: static-pod
+dns: pod coredns
+You should be comfortable investigating a running cluster, know different methods on how a cluster and its services can be setup and be able to troubleshoot and find error sources.
+
+ 
+
+ 
+
+Question 9 | Kill Scheduler, Manual Scheduling
+Task weight: 5%
+
+ 
+
+Use context: kubectl config use-context k8s-c2-AC
+
+ 
+
+Ssh into the controlplane node with ssh cluster2-controlplane1. Temporarily stop the kube-scheduler, this means in a way that you can start it again afterwards.
+
+Create a single Pod named manual-schedule of image httpd:2.4-alpine, confirm it's created but not scheduled on any node.
+
+Now you're the scheduler and have all its power, manually schedule that Pod on node cluster2-controlplane1. Make sure it's running.
+
+Start the kube-scheduler again and confirm it's running correctly by creating a second Pod named manual-schedule2 of image httpd:2.4-alpine and check if it's running on cluster2-node1.
+
+ 
+
+Answer:
+Stop the Scheduler
+First we find the controlplane node:
+
+➜ k get node
+NAME                     STATUS   ROLES           AGE   VERSION
+cluster2-controlplane1   Ready    control-plane   26h   v1.26.0
+cluster2-node1           Ready    <none>          26h   v1.26.0
+Then we connect and check if the scheduler is running:
+
+➜ ssh cluster2-controlplane1
+
+➜ root@cluster2-controlplane1:~# kubectl -n kube-system get pod | grep schedule
+kube-scheduler-cluster2-controlplane1            1/1     Running   0          6s
+Kill the Scheduler (temporarily):
+
+➜ root@cluster2-controlplane1:~# cd /etc/kubernetes/manifests/
+
+➜ root@cluster2-controlplane1:~# mv kube-scheduler.yaml ..
+And it should be stopped:
+
+➜ root@cluster2-controlplane1:~# kubectl -n kube-system get pod | grep schedule
+
+➜ root@cluster2-controlplane1:~# 
+ 
+
+Create a Pod
+Now we create the Pod:
+
+k run manual-schedule --image=httpd:2.4-alpine
+And confirm it has no node assigned:
+
+➜ k get pod manual-schedule -o wide
+NAME              READY   STATUS    ...   NODE     NOMINATED NODE
+manual-schedule   0/1     Pending   ...   <none>   <none>        
+ 
+
+Manually schedule the Pod
+Let's play the scheduler now:
+
+k get pod manual-schedule -o yaml > 9.yaml
+# 9.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2020-09-04T15:51:02Z"
+  labels:
+    run: manual-schedule
+  managedFields:
+...
+    manager: kubectl-run
+    operation: Update
+    time: "2020-09-04T15:51:02Z"
+  name: manual-schedule
+  namespace: default
+  resourceVersion: "3515"
+  selfLink: /api/v1/namespaces/default/pods/manual-schedule
+  uid: 8e9d2532-4779-4e63-b5af-feb82c74a935
+spec:
+  nodeName: cluster2-controlplane1        # add the controlplane node name
+  containers:
+  - image: httpd:2.4-alpine
+    imagePullPolicy: IfNotPresent
+    name: manual-schedule
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-nxnc7
+      readOnly: true
+  dnsPolicy: ClusterFirst
+...
+
+The only thing a scheduler does, is that it sets the nodeName for a Pod declaration. How it finds the correct node to schedule on, that's a very much complicated matter and takes many variables into account.
+
+As we cannot kubectl apply or kubectl edit , in this case we need to delete and create or replace:
+
+k -f 9.yaml replace --force
+How does it look?
+
+➜ k get pod manual-schedule -o wide
+NAME              READY   STATUS    ...   NODE            
+manual-schedule   1/1     Running   ...   cluster2-controlplane1
+It looks like our Pod is running on the controlplane now as requested, although no tolerations were specified. Only the scheduler takes tains/tolerations/affinity into account when finding the correct node name. That's why it's still possible to assign Pods manually directly to a controlplane node and skip the scheduler.
+
+ 
+
+Start the scheduler again
+➜ ssh cluster2-controlplane1
+
+➜ root@cluster2-controlplane1:~# cd /etc/kubernetes/manifests/
+
+➜ root@cluster2-controlplane1:~# mv ../kube-scheduler.yaml .
+Checks it's running:
+
+➜ root@cluster2-controlplane1:~# kubectl -n kube-system get pod | grep schedule
+kube-scheduler-cluster2-controlplane1            1/1     Running   0          16s
+Schedule a second test Pod:
+
+k run manual-schedule2 --image=httpd:2.4-alpine
+➜ k get pod -o wide | grep schedule
+manual-schedule    1/1     Running   ...   cluster2-controlplane1
+manual-schedule2   1/1     Running   ...   cluster2-node1
+Back to normal.
+
+ 
+
 
  
