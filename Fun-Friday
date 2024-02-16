@@ -1,0 +1,190 @@
+Question 2 | Schedule Pod on Controlplane Node
+Task weight: 3%
+
+ 
+
+Use context: kubectl config use-context k8s-c1-H
+
+ 
+
+Create a single Pod of image httpd:2.4.41-alpine in Namespace default. The Pod should be named pod1 and the container should be named pod1-container. This Pod should only be scheduled on a controlplane node, do not add new labels any nodes.
+
+ 
+
+Answer:
+First we find the controlplane node(s) and their taints:
+
+k get node # find controlplane node
+
+k describe node cluster1-controlplane1 | grep Taint -A1 # get controlplane node taints
+
+k get node cluster1-controlplane1 --show-labels # get controlplane node labels
+ 
+
+Next we create the Pod template:
+
+# check the export on the very top of this document so we can use $do
+k run pod1 --image=httpd:2.4.41-alpine $do > 2.yaml
+
+vim 2.yaml
+Perform the necessary changes manually. Use the Kubernetes docs and search for example for tolerations and nodeSelector to find examples:
+
+# 2.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: pod1
+  name: pod1
+spec:
+  containers:
+  - image: httpd:2.4.41-alpine
+    name: pod1-container                       # change
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  tolerations:                                 # add
+  - effect: NoSchedule                         # add
+    key: node-role.kubernetes.io/control-plane # add
+  nodeSelector:                                # add
+    node-role.kubernetes.io/control-plane: ""  # add
+status: {}
+Important here to add the toleration for running on controlplane nodes, but also the nodeSelector to make sure it only runs on controlplane nodes. If we only specify a toleration the Pod can be scheduled on controlplane or worker nodes.
+
+Now we create it:
+
+k -f 2.yaml create
+Let's check if the pod is scheduled:
+
+➜ k get pod pod1 -o wide
+NAME   READY   STATUS    RESTARTS   ...    NODE                     NOMINATED NODE
+pod1   1/1     Running   0          ...    cluster1-controlplane1   <none>        
+ 
+uestion 4 | Pod Ready if Service is reachable
+Task weight: 4%
+
+ 
+
+Use context: kubectl config use-context k8s-c1-H
+
+ 
+
+Do the following in Namespace default. Create a single Pod named ready-if-service-ready of image nginx:1.16.1-alpine. Configure a LivenessProbe which simply executes command true. Also configure a ReadinessProbe which does check if the url http://service-am-i-ready:80 is reachable, you can use wget -T2 -O- http://service-am-i-ready:80 for this. Start the Pod and confirm it isn't ready because of the ReadinessProbe.
+
+Create a second Pod named am-i-ready of image nginx:1.16.1-alpine with label id: cross-server-ready. The already existing Service service-am-i-ready should now have that second Pod as endpoint.
+
+Now the first Pod should be in ready state, confirm that.
+
+ 
+
+Answer:
+It's a bit of an anti-pattern for one Pod to check another Pod for being ready using probes, hence the normally available readinessProbe.httpGet doesn't work for absolute remote urls. Still the workaround requested in this task should show how probes and Pod<->Service communication works.
+
+First we create the first Pod:
+
+k run ready-if-service-ready --image=nginx:1.16.1-alpine $do > 4_pod1.yaml
+
+vim 4_pod1.yaml
+Next perform the necessary additions manually:
+
+# 4_pod1.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ready-if-service-ready
+  name: ready-if-service-ready
+spec:
+  containers:
+  - image: nginx:1.16.1-alpine
+    name: ready-if-service-ready
+    resources: {}
+    livenessProbe:                                      # add from here
+      exec:
+        command:
+        - 'true'
+    readinessProbe:
+      exec:
+        command:
+        - sh
+        - -c
+        - 'wget -T2 -O- http://service-am-i-ready:80'   # to here
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+Then create the Pod:
+
+k -f 4_pod1.yaml create
+And confirm it's in a non-ready state:
+
+➜ k get pod ready-if-service-ready
+NAME                     READY   STATUS    RESTARTS   AGE
+ready-if-service-ready   0/1     Running   0          7s
+We can also check the reason for this using describe:
+
+➜ k describe pod ready-if-service-ready
+ ...
+  Warning  Unhealthy  18s   kubelet, cluster1-node1  Readiness probe failed: Connecting to service-am-i-ready:80 (10.109.194.234:80)
+wget: download timed out
+Now we create the second Pod:
+
+k run am-i-ready --image=nginx:1.16.1-alpine --labels="id=cross-server-ready"
+The already existing Service service-am-i-ready should now have an Endpoint:
+
+k describe svc service-am-i-ready
+k get ep # also possible
+Which will result in our first Pod being ready, just give it a minute for the Readiness probe to check again:
+
+➜ k get pod ready-if-service-ready
+NAME                     READY   STATUS    RESTARTS   AGE
+ready-if-service-ready   1/1     Running   0          53s
+Look at these Pods coworking together!
+
+ 
+
+ Question 5 | Kubectl sorting
+Task weight: 1%
+
+ 
+
+Use context: kubectl config use-context k8s-c1-H
+
+ 
+
+There are various Pods in all namespaces. Write a command into /opt/course/5/find_pods.sh which lists all Pods sorted by their AGE (metadata.creationTimestamp).
+
+Write a second command into /opt/course/5/find_pods_uid.sh which lists all Pods sorted by field metadata.uid. Use kubectl sorting for both commands.
+
+ 
+
+Answer:
+A good resources here (and for many other things) is the kubectl-cheat-sheet. You can reach it fast when searching for "cheat sheet" in the Kubernetes docs.
+
+# /opt/course/5/find_pods.sh
+kubectl get pod -A --sort-by=.metadata.creationTimestamp
+And to execute:
+
+➜ sh /opt/course/5/find_pods.sh
+NAMESPACE         NAME                                             ...          AGE
+kube-system       kube-scheduler-cluster1-controlplane1            ...          63m
+kube-system       etcd-cluster1-controlplane1                      ...          63m
+kube-system       kube-apiserver-cluster1-controlplane1            ...          63m
+kube-system       kube-controller-manager-cluster1-controlplane1   ...          63m
+...
+For the second command:
+
+# /opt/course/5/find_pods_uid.sh
+kubectl get pod -A --sort-by=.metadata.uid
+And to execute:
+
+➜ sh /opt/course/5/find_pods_uid.sh
+NAMESPACE         NAME                                      ...          AGE
+kube-system       coredns-5644d7b6d9-vwm7g                  ...          68m
+project-c13       c13-3cc-runner-heavy-5486d76dd4-ddvlt     ...          63m
+project-hamster   web-hamster-shop-849966f479-278vp         ...          63m
+project-c13       c13-3cc-web-646b6c8756-qsg4b              ...          63m
+ 
+
+ 
