@@ -1,3 +1,7 @@
+####lets create an headless service for mysql
+vi mysqlsrv.yml
+####################################
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -10,3 +14,9 @@ spec:
     - name: mysql
       port: 3306
   clusterIP: None #internal
+#####verify it
+ 489  kubectl apply -f mysqlsrv.yml
+  490  kubectl get svc
+  492  kubectl describe svc mysql
+  493  kubectl get pod
+  494  kubectl get pod -o wide
