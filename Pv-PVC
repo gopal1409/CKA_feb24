@@ -20,7 +20,7 @@ spec:
     - ReadWriteOnce #readwritemany #read
   persistentVolumeReclaimPolicy: Recycle #once you delete the pod the data inside the storage get deleted
  #retain #delete
-  storageClassName: slow
+ # storageClassName: slow
   ##hostpath volume
   hostPath:
     path: /mnt/data
