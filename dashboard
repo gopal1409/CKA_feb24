@@ -6,3 +6,30 @@
   511  kubectl-n kubernetes-dashboard edit svc kubernetes-dashboard
   512  kubectl get svc -A
 #####copy the node machine ip and try to access the same using browser.
+##lets create an service account
+ 518  kubectl -n kubernetes-dashboard create sa admin-user
+  519  kubectl -n kubernetes-dashboard describe sa admin-user
+#########################################################
+lets create the role and role binding
+##############################################
+ 520  vi role.yml
+apiVersion: rbac.authorization.k8s.io/v1
+# This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: admin-user # Name is case sensitive
+  namespace: kubernetes-dashboard
+############################################
+  521  kubectl apply -f role.yml
+####################################################
+verify the role and role binding
+#################################################
+ 527  kubectl get clusterrole
+ 529  kubectl get clusterrolebinding
