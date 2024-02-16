@@ -33,3 +33,5 @@ verify the role and role binding
 #################################################
  527  kubectl get clusterrole
  529  kubectl get clusterrolebinding
+#####generate a token
+kubectl -n kubernetes-dashboard create token admin-user
