@@ -1,0 +1,6 @@
+##create a namespace called as project-safari
+###inside the namespace create a service account kim
+####create a a role and role binding called as tag
+###authorized to create and update pod and deployment 
+###test it using can-i 
+###test it using curl request
