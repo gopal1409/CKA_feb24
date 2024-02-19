@@ -22,6 +22,10 @@ You need to verify that the sa account need to have access to the object secret 
 1. name of the role 
 2. name of the service account
   565  kubectl -n project-hamster create rolebinding -h
+  569  kubectl -n project-hamster create rolebinding processor --role processor --serviceaccount project-hamster:jane --dry-run=client -o yaml
+  
+  575  kubectl -n project-hamster create rolebinding processor --role processor --serviceaccount project-hamster:jane
+  576  kubectl -n project-hamster describe rolebinding processor
 
 
 
