@@ -1,0 +1,2 @@
+Create a new service account jane but inside a namespace project-hamster. Create a role and rolebinding. Both the role and rolebinding will have a name called as processor. These should allow the new sa to create secret and configmap in the namespace. 
+You need to verify that the sa account need to have access to the object secret and configmap
