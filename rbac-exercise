@@ -2,5 +2,7 @@
 ###inside the namespace create a service account kim
 ####create a a role and role binding called as tag
 ###authorized to create and update pod and deployment 
+##default nginx image
+##3update the nginx image nginx:1.25.4
 ###test it using can-i 
 ###test it using curl request
