@@ -13,5 +13,10 @@ You need to verify that the sa account need to have access to the object secret 
 ###3lets create a role and do a dry run also
  551  kubectl -n project-hamster create role processor
   552  kubectl -n project-hamster create role processor -h
+#######lets create the role with verb as create permission on the api secret and configmap
+  558  kubectl -n project-hamster create role processor --verb=create --resource=secret --resource=configmap --dry-run=client -o yaml > processorrole.yml
+  559  cat processorrole.yml
+  560  kubectl -n project-hamster create role processor --verb=create --resource=secret --resource=configmap
+  561  kubectl -n project-hamster describe role processor
 
 
