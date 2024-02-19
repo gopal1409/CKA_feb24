@@ -1,2 +1,13 @@
 Create a new service account jane but inside a namespace project-hamster. Create a role and rolebinding. Both the role and rolebinding will have a name called as processor. These should allow the new sa to create secret and configmap in the namespace. 
 You need to verify that the sa account need to have access to the object secret and configmap
+####as it is our cluster we dont have an namespace called as project hamster. 
+ 538  kubectl get ns
+  539  kubectl create ns project-hamster
+  540  kubectl get ns
+####nexty we will create the service account and verify it
+544  kubectl -n project-hamster create sa jane --dry-run=client -o yaml > jane.yml
+  545  cat jane.yml
+  546  kubectl apply -f jane.yml
+  547  kubectl get sa
+  548  kubectl -n project-hamster get sa
+
