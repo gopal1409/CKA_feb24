@@ -26,6 +26,13 @@ You need to verify that the sa account need to have access to the object secret 
   
   575  kubectl -n project-hamster create rolebinding processor --role processor --serviceaccount project-hamster:jane
   576  kubectl -n project-hamster describe rolebinding processor
+##3to test role and rolebinding
+####auth can-i
+ 586  kubectl -n project-hamster auth can-i create secret --as system:serviceaccount:project-hamster:jane
+  587  kubectl -n project-hamster auth can-i create configmap --as system:serviceaccount:project-hamster:jane
+  588  kubectl -n project-hamster auth can-i create pod --as system:serviceaccount:project-hamster:jane
+  589  kubectl -n project-hamster auth can-i create deployment --as system:serviceaccount:project-hamster:jane
+
 
 
 
