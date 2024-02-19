@@ -33,6 +33,5 @@ You need to verify that the sa account need to have access to the object secret 
   588  kubectl -n project-hamster auth can-i create pod --as system:serviceaccount:project-hamster:jane
   589  kubectl -n project-hamster auth can-i create deployment --as system:serviceaccount:project-hamster:jane
 
-
-
-
+##need to verify the same using curl request that we can do this activity or not
+curl --cacert <file containing CA Certificate> -H "Authorization: Bearer eyJhb...<token value here>" https://73.112.123.115:6443/api/v1/namespaces/default/pods
