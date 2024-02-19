@@ -18,5 +18,10 @@ You need to verify that the sa account need to have access to the object secret 
   559  cat processorrole.yml
   560  kubectl -n project-hamster create role processor --verb=create --resource=secret --resource=configmap
   561  kubectl -n project-hamster describe role processor
+###next we will create role binding to create the role binding
+1. name of the role 
+2. name of the service account
+  565  kubectl -n project-hamster create rolebinding -h
+
 
 
