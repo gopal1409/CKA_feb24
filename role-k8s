@@ -10,4 +10,8 @@ You need to verify that the sa account need to have access to the object secret 
   546  kubectl apply -f jane.yml
   547  kubectl get sa
   548  kubectl -n project-hamster get sa
+###3lets create a role and do a dry run also
+ 551  kubectl -n project-hamster create role processor
+  552  kubectl -n project-hamster create role processor -h
+
 
