@@ -35,3 +35,36 @@ You need to verify that the sa account need to have access to the object secret 
 
 ##need to verify the same using curl request that we can do this activity or not
 curl --cacert <file containing CA Certificate> -H "Authorization: Bearer eyJhb...<token value here>" https://73.112.123.115:6443/api/v1/namespaces/default/pods
+##we will get the ca certificate from this location
+
+/etc/kubernetes/pki/
+
+###lets find the url of the master machine
+ cat /root/.kube/config
+inside this you will find the url of the k8s master machine which run the api
+ https://172.31.85.2:6443
+
+https://73.112.123.115:6443/api/v1/namespaces/default/pods ##this is the url or your kubernetes master machine
+
+####lets do the curl request
+###we will generate a token
+kubectl -n project-hamster create token jane
+###we will create a secret.yml
+###vi secret.yml
+######inside the file we will add this secret
+
+#####press esc i
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-db-pass #name
+  namespace: project-hamster
+type: Opaque
+data:
+  password: ZGJwYXNzd29yZDEx #key
+###save the file using Press Esc :wq
+
+curl -X POST https://172.31.85.2:6443/api/v1/namespaces/project-hamster/secrets -H "Authorization: Bearer  " -H "Content-Type: application/yaml" --data-binary @secret.yml --cacert /etc/kubernetes/pki/ca.crt
+####verify the secret
+kubectl get secret
+####verify the pipeline i
