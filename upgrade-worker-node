@@ -1,0 +1,45 @@
+##upgrade the worker node same from 
+#draing  the worker node
+upgrade kubeadm on the node 
+upgrade the kubelet and kubectl 
+uncordon the node
+######################################
+##first we need to drain the node from master machine
+   65  kubectl drain k8snode-old --ignore-daemonsets --delete-emptydir-data
+####as the pod is runnign so draining will not work we need to eviction of pod from a node using forcefully
+##forcefully evict the pod and try to run the pod in a other worker node
+   66  kubectl drain k8snode-old --ignore-daemonsets --delete-emptydir-data --force
+   67  kubectl get nodes
+   68  kubectl get pod
+###then login to the nodes using ssh from the master machien and update the node
+sudo -i
+ 1  apt-get update
+    2  apt-cache show kubeadm
+    3  apt-cache show kubeadm | grep 1.28
+    4  apt-cache show kubeadm | grep 1.27
+    5  apt-cache show kubeadm
+    6  apt-mark hold kubectl kubelet
+    7  apt-mark unhold kubeadm
+    8  apt-get install kubeadm=1.27.7-1.1
+    9  kubeadm version
+####upgrade plan will not work
+   10  kubeadm upgrade plan
+ ###update the kubectl and kubelet
+   12  apt-get install kubectl=1.27.7-1.1 kubelet=1.27.7-1.1
+##unhold the kubelet and kubectl
+   13  apt-mark unhold kubelet kubectl
+#####restart the kubelet service
+systemctl restart kubelet
+systemctl status kubelet
+####then exist the worker node and update the cluster
+exit
+exit
+  #####################################
+   70  kubectl get nodes
+   71  kubeadm upgrade node
+   72  kubectl get nodes
+  #@#please do not forget to uncordon the node
+   75  kubectl uncordon k8snode-old
+   76  kubectl get nodes
+####finally kubectl get pod will show you the running pod
+
