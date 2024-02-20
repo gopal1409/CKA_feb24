@@ -17,3 +17,33 @@ kubectl get nodes - o wide
     7  kubectl get pod
     8  kubectl get deploy
  kubectl get pod -o wide
+###lets upgrade the master node
+###first we will drain the node
+ 24  kubectl drain k8smaster-old
+##we need to add two switches before i drain the node --ignore-daemonsets --delete-emptydir-data
+   25  kubectl drain k8smaster-old --ignore-daemonsets --delete-emptydir-data
+   26  kubectl get nodes
+#####apt-cache show you the version of kubeadm
+   27  apt-cache show kubeadm
+   28  apt-cache show kubeadm | grep 1.27
+   29  apt mark hold kubectl kubelet
+   30  apt-mark hold kubectl kubelet
+   31  apt-mark unhold kubeadm
+####do not forget to include the minor version
+   32  apt-get install kubeadm=1.27.7-1.1
+   33  kubeadm version
+   34  kubeadm upgrade plan
+###upgrade plan will show you lots of other version also but compare the version of kubeadm you have chosen then apply it
+   36  kubeadm upgrade apply v1.27.7
+   37  kubectl version
+###then upgrade the kubelete and kubectl before upgrade hold the kubelet and kubectl service
+   38  apt-mark unhold kubelet kubectl
+###check the version match with kubeadm
+   40  apt-get install kubelet=1.27.7-1.1 kubectl=1.27.7-1.1
+@@@below command will not show the node has been upgraded
+   41  kubectl get nodes -o wide
+##do no forget to restart the kubelet service
+   42  service kubelet restart
+   43  service kubelet status
+   44  kubeadm upgrade plan
+   45  kubectl get nodes
