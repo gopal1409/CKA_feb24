@@ -7,3 +7,7 @@ bash <(curl -s https://raw.githubusercontent.com/killer-sh/cks-course-environmen
 
 # worker
 bash <(curl -s https://raw.githubusercontent.com/killer-sh/cks-course-environment/master/cluster-setup/previous/install_worker.sh)
+
+####once completed check the version of k8s
+kubectl get nodes
+kubectl get nodes - o wide
