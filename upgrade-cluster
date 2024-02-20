@@ -16,3 +16,4 @@ kubectl get nodes - o wide
     6  kubectl create deploy test --image=nginx --port=80
     7  kubectl get pod
     8  kubectl get deploy
+ kubectl get pod -o wide
