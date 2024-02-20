@@ -12,6 +12,7 @@ uncordon the node
    67  kubectl get nodes
    68  kubectl get pod
 ###then login to the nodes using ssh from the master machien and update the node
+ssh gopal@k8snode
 sudo -i
  1  apt-get update
     2  apt-cache show kubeadm
