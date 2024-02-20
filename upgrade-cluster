@@ -53,3 +53,7 @@ kubectl get nodes - o wide
 ##3please do not forget to uncordon the node
   48  kubectl uncordon k8smaster-old
    49  kubectl get nodes
+##verify the kubeadm kubectl kubelet version
+   53  kubeadm version
+ 57  kubelet version
+   58  kubelet --version
