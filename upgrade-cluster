@@ -11,3 +11,8 @@ bash <(curl -s https://raw.githubusercontent.com/killer-sh/cks-course-environmen
 ####once completed check the version of k8s
 kubectl get nodes
 kubectl get nodes - o wide
+########we will create some workload in our k8s cluster
+ 5  kubectl run test --image=nginx
+    6  kubectl create deploy test --image=nginx --port=80
+    7  kubectl get pod
+    8  kubectl get deploy
