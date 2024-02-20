@@ -1,0 +1,9 @@
+###we will install two vm on the same network
+##open the required port in both the virtual machine
+https://kubernetes.io/docs/reference/networking/ports-and-protocols/
+
+# master
+bash <(curl -s https://raw.githubusercontent.com/killer-sh/cks-course-environment/master/cluster-setup/previous/install_master.sh)
+
+# worker
+bash <(curl -s https://raw.githubusercontent.com/killer-sh/cks-course-environment/master/cluster-setup/previous/install_worker.sh)
