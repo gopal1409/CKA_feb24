@@ -12,6 +12,9 @@ bash <(curl -s https://raw.githubusercontent.com/killer-sh/cks-course-environmen
 kubectl get nodes
 kubectl get nodes - o wide
 ########we will create some workload in our k8s cluster
+ 18  apt-get update
+   19  apt-cache madison kubeadm
+
  5  kubectl run test --image=nginx
     6  kubectl create deploy test --image=nginx --port=80
     7  kubectl get pod
@@ -47,3 +50,6 @@ kubectl get nodes - o wide
    43  service kubelet status
    44  kubeadm upgrade plan
    45  kubectl get nodes
+##3please do not forget to uncordon the node
+  48  kubectl uncordon k8smaster-old
+   49  kubectl get nodes
