@@ -1,0 +1,8 @@
+ 647  cd /etc/kubernetes/manifests/
+  648  ls
+  649  cat etcd.yaml
+  651  cd /root
+  652  mkdir /etcdback
+  ###open the kubernetes.io documentation findout etcdback and take the back in /etcdback with the name etcd-backup.db
+######verfify the back using 
+ls /etcdback
