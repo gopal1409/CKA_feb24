@@ -5,4 +5,19 @@
   652  mkdir /etcdback
   ###open the kubernetes.io documentation findout etcdback and take the back in /etcdback with the name etcd-backup.db
 ######verfify the back using 
+ ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save /etcdback/etcd-backup.db
+
 ls /etcdback
+#####once we take the back up we will stop all controlplane components
+658  cd /etc/kubernetes/manifests/
+  659  mv * ..
+  660  ls
+  661  cd ..
+  662  ls
+  663  cd manifests/
+  664  kubectl get nodes
+#####the above command will give you an error 
+The connection to the server 10.0.0.4:6443 was refused - did you specify the right host or port?
+###the error is because of missing configuration file
+  665  crictl ps
+#####the above command will show that all the master component container are running
