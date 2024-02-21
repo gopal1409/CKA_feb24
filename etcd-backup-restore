@@ -21,3 +21,13 @@ The connection to the server 10.0.0.4:6443 was refused - did you specify the rig
 ###the error is because of missing configuration file
   665  crictl ps
 #####the above command will show that all the master component container are running
+lets restore the backup
+##################################################################################################
+668  cd /etc/kubernetes/
+  669  cat etcd.yaml
+####check the -hostPath from the last three  4th line
+  670  ls /var/lib/etcd/
+  671  ls /var/lib/etcd/member/
+  672  ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot restore /etcdback/etcd-backup.db --data-dir /var/lib/etcd-backup
+
+#### before we move all the control plane yaml file we need to change the etcd to map to a new directory
