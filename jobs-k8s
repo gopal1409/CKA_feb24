@@ -50,3 +50,4 @@ spec:
           command: ["ls","/data"]
       restartPolicy: Never #onfailure
 
+
