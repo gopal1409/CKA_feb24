@@ -35,3 +35,18 @@ spec:
 ####try the completions
  699  kubectl apply -f jobs.yml
   700  kubectl get pod
+###what will happen if you job is failing you can define backofflimit
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: node-app-fail
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      containers:
+        - name: node-app-job
+          image: alpine
+          command: ["ls","/data"]
+      restartPolicy: Never #onfailure
+
