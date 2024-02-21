@@ -1,0 +1,19 @@
+ 698  vi jobs.yml
+################################
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: node-app-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: node-app-job
+          image: alpine
+          command: ["echo","welcome to my node app"]
+      restartPolicy: Never #onfailure
+  699  kubectl apply -f jobs.yml
+  700  kubectl get pod
+  701  kubectl logs node-app-job-f99fh
+  702  history
+  703  kubectl get job
