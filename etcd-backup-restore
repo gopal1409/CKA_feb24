@@ -31,3 +31,26 @@ lets restore the backup
   672  ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot restore /etcdback/etcd-backup.db --data-dir /var/lib/etcd-backup
 
 #### before we move all the control plane yaml file we need to change the etcd to map to a new directory
+cd /etc/kubernetes/
+##3modify the restore path in etcd.yml file
+vi etcd.yml
+#####################################from the laste fe line change it in the volume block
+ volumes:
+  - hostPath:
+      path: /etc/kubernetes/pki/etcd
+      type: DirectoryOrCreate
+    name: etcd-certs
+  - hostPath:
+     # path: /var/lib/etcd ####change it to 
+      path: /var/lib/etcd-backup
+      type: DirectoryOrCreate
+    name: etcd-data
+#####move all your yaml file to the manifest directoryu
+cd /etc/kubernetes/manifests
+####run the move command
+mv ../*.yaml .
+######wait for few min 
+kubectl get nodes
+kubectl get pod
+####the before pod will go away
+##which sinmply means you have successfully back and restore etcd
