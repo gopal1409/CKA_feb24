@@ -17,3 +17,20 @@ spec:
   701  kubectl logs node-app-job-f99fh
   702  history
   703  kubectl get job
+###completion
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: node-app-job2
+spec:
+  completions: 2
+  template:
+    spec:
+      containers:
+        - name: node-app-job
+          image: alpine
+          command: ["echo","welcome to my node app1"]
+      restartPolicy: Never #onfailure
+####try the completions
+ 699  kubectl apply -f jobs.yml
+  700  kubectl get pod
