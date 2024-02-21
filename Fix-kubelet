@@ -1,0 +1,33 @@
+Fix kubelet
+8% average marks on this. 
+there is an issue with the kubelet not running on a node. fix it and confirm that the cluster has node avaiable in ready state afterward
+you can also able to schedule a pod on clusternode afterwards. 
+write the reason of the issue into file
+
+###how to touble shoot kubelet in a node
+the procedure on task like these should be check if the kubelet is running. if not start it. then check its logs and correct the error if it is there
+ 621  kubectl get nodes
+###to make one of the node not ready
+  622  ssh gopal@k8snode
+sudo -i
+#####################################
+systemctl stop kubelete
+systemctl status kubelet
+############################################
+exit
+exit
+####we will be in the master machine
+kubectl get nodes
+#######one of the node is not ready
+####again do ssh
+ssh gopal@k8snode
+#################################
+systemctl start kubelet
+systemctl status kubelet
+#######use the enable command
+systemctl enable kubelet
+###enable will put your service in startup
+exit
+exit
+####from the master machine check the node now it will show you ready
+kubectl get nodes
