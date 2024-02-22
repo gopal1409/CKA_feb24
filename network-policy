@@ -1,0 +1,11 @@
+#$##lets see pod to pod communication work or not
+ 938  kubectl run frontend --image=nginx
+  939  kubectl run backend --image=nginx
+  940  kubectl get pod
+  941  kubectl expose pod frontend -- port 80
+  942  kubectl expose pod frontend --port 80
+  943  kubectl expose pod backend --port 80
+  944  kubectl get svc
+  945  kubectl get pod,svc
+  946  kubectl exec frontend -- curl backend
+  947  kubectl exec backend -- curl frontend
