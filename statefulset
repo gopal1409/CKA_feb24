@@ -74,3 +74,9 @@ kubectl apply -f state.yml
           storage: 1Gi
 #######apply it and see the error
 kubectl apply -f state.yml
+####editing statefulset is not allow only few things like replica can be modified
+kubectl replace -f state.yml --force
+###check the pod
+kubectl get statefulset
+kubectl get pod
+
