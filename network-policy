@@ -9,3 +9,23 @@
   945  kubectl get pod,svc
   946  kubectl exec frontend -- curl backend
   947  kubectl exec backend -- curl frontend
+###lets create a default deny in the default namespace
+vi default-deny.yml
+###########################
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+#####################################
+kubectl apply -f default-deny.yml
+###after applying lets verify the policy
+ 951  kubectl get networkpolicy
+  952  kubectl describe networkpolicy default-deny
+946  kubectl exec frontend -- curl backend
+  947  kubectl exec backend -- curl frontend
