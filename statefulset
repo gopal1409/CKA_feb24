@@ -85,4 +85,52 @@ kubectl get pod
 ###in statefulset due to some reason if the first pod do not come up the other pod will never come up
  899  kubectl get pod
   900  kubectl describe pod web-0
+####to resolve the below mentioned error
+ Warning  FailedScheduling  3m8s (x4 over 18m)  default-scheduler  0/2 nodes are available: pod has unbound immediate PersistentVolumeClaims. preemption: 0/2 nodes are available: 2 Preemption is not helpful for scheduling..
+####the problem is of storaage class name
+vi state.yml
+#######################
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "my-storage-class" ##change the storage class name
+      resources:
+        requests:
+          storage: 1
+#####how to get the storage class name
+kubectl get sc
+####copy the name and replace it
+ volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "local-path" ##this is the new name of storage class
+      resources:
+        requests:
+          storage: 1Gi
+#####after updating the storage class
+###we will delete the statefulset and pvc which is mapped to wrong storage class
+  919  kubectl delete statefulset web
+  920  kubectl delete pvc www-web-0
+##############################################apply the new statefulset
+921  kubectl apply -f state.yml
+###as per the replicacount it is going to create that many number of pvc
+  922  kubectl get pvc
+  923  kubectl get statefulset
+  924  kubectl get pod
+#########################increase the replicacount to 3 and verify the storage and pod
+925  vi state.yml
+  926  kubectl apply -f state.yml
+  927  kubectl get statefulset
+  928  kubectl get pod
+  929  kubectl get pvc
+#########################decrease the replica count to 2 it will delete the pod but the pvc will not be deleted
+925  vi state.yml
+  926  kubectl apply -f state.yml
+  927  kubectl get statefulset
+  928  kubectl get pod
+  929  kubectl get pvc
 
