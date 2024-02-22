@@ -51,3 +51,10 @@ spec:
 
 #####apply this manifest
 kubectl apply -f state.yml
+####lets troubleshoot the statefulset
+ 889  kubectl get pod
+  890  kubectl get statefulset
+  891  kubectl describe statefulset web
+###check the event log of pvc
+ 893  kubectl get pvc
+  894  kubectl describe pvc nginx-www-web-0
