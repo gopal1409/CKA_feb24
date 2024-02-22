@@ -131,6 +131,8 @@ kubectl get sc
 925  vi state.yml
   926  kubectl apply -f state.yml
   927  kubectl get statefulset
+###pod will be deleted 
   928  kubectl get pod
+###pvc will not be deleted
   929  kubectl get pvc
 
