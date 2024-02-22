@@ -50,7 +50,7 @@ spec:
           storage: 1Gi
 
 #####apply this manifest
-kubectl apply -f state.yml
+kubectl replace -f state.yml --force
 ####lets troubleshoot the statefulset
  889  kubectl get pod
   890  kubectl get statefulset
