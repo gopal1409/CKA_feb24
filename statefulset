@@ -79,4 +79,7 @@ kubectl replace -f state.yml --force
 ###check the pod
 kubectl get statefulset
 kubectl get pod
+###in statefulset due to some reason if the first pod do not come up the other pod will never come up
+ 899  kubectl get pod
+  900  kubectl describe pod web-0
 
