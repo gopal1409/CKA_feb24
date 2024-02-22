@@ -96,3 +96,4 @@ I am the primary
 
 $ kubectl logs postgres-1 -c postgres-init
 I am a read-only replica
+##verify how many dynamic volumes are created
