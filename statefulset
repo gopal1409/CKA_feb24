@@ -72,3 +72,5 @@ kubectl apply -f state.yml
       resources:
         requests:
           storage: 1Gi
+#######apply it and see the error
+kubectl apply -f state.yml
