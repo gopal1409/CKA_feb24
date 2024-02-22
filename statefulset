@@ -58,3 +58,17 @@ kubectl apply -f state.yml
 ###check the event log of pvc
  893  kubectl get pvc
   894  kubectl describe pvc nginx-www-web-0
+####the volumeMount and Volume claim template need to match
+      name: web
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "my-storage-class"
+      resources:
+        requests:
+          storage: 1Gi
