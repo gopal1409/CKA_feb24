@@ -29,3 +29,8 @@ kubectl apply -f default-deny.yml
   952  kubectl describe networkpolicy default-deny
 946  kubectl exec frontend -- curl backend
   947  kubectl exec backend -- curl frontend
+
+###we will create two routing 
+ingress and egress 
+from frontend to backend ingress
+backend to frontend it will acccept the connection egress
