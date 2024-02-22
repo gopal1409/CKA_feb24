@@ -1,3 +1,18 @@
+##first create a headless service of postgress
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  ports:
+    - name: postgres
+      port: 5432
+  clusterIP: None
+  selector:
+    app: postgres
+###deploy the postgresssql
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
