@@ -1,0 +1,11 @@
+####first we want to create dynamic storage and manage the local disk resources. 
+###to do the same simply install the fillowing utilitly
+kubectl get sc
+###currenly there is no storage class 
+###storage class in k8s are being used to dynamically create storage in the cloud.
+##below mentioned utility will create a local storage class
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml
+##########
+kubectl get sc
+####this will show you the storage class whcih is being created
+local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3h1m
