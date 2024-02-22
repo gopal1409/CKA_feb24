@@ -59,13 +59,16 @@ kubectl apply -f state.yml
  893  kubectl get pvc
   894  kubectl describe pvc nginx-www-web-0
 ####the volumeMount and Volume claim template need to match
+####we will open the state.yml file
+vi state.yml
+################################
       name: web
         volumeMounts:
-        - name: www
+        - name: www ###this should match 
           mountPath: /usr/share/nginx/html
   volumeClaimTemplates:
   - metadata:
-      name: www
+      name: www ###this should match
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "my-storage-class"
