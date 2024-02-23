@@ -12,3 +12,4 @@ spec:
       - "infinity"
     imagePullPolicy: IfNotPresent
   restartPolicy: Always
+kubectl exec -i -t dnsutils -- nslookup kubernetes.default
