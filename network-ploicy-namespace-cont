@@ -1,0 +1,30 @@
+###lets create a namespace and label it
+kubectl create ns cassandra
+###label it
+kubectl edit ns cassandra
+####################################
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: "2024-02-23T09:52:55Z"
+  labels:
+    kubernetes.io/metadata.name: cassandra
+    ns: cassandra ##add this line
+  name: cassandra
+  resourceVersion: "211493"
+  uid: 9c7134ec-674a-4679-aeb9-f086be78f8c5
+spec:
+  finalizers:
+  - kubernetes
+status:
+  phase: Active
+#####save the above mentioned file
+  997  kubectl -n cassandra run cassandra --image=nginx
+  999  kubectl -n cassandra get pod -o wide
+ 1001  kubectl exec backend -- curl 192.168.1.27
+##still not work (as we have denied everything)
+
