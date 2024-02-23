@@ -60,3 +60,7 @@ spec:
 ###then test it 
  1008  kubectl apply -f backend.yml
  1009  kubectl exec backend -- curl 192.168.1.27
+
+###create a deny rule in the namespace casaandra
+####create an network policy where default namespace can communicate with casandra name name ingress 
+###allow backend pod to have incoming traffic from frontend pods and to cassandra namespace
