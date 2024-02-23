@@ -94,3 +94,29 @@ spec:
   976  kubectl describe networkpolicy backend
 ###the below mentioned will work due to ingress routing
   977  kubectl exec frontend -- curl 192.168.1.22
+####lets create an exception in default deny polic
+##deny all the incming and outgoing traffic from all pods in namespace default
+###but in the namespace default we want to allow the dns traffic. that what we can do eg. kubectl exec frontend --curl backend
+vi default-deny.yml
+###########################
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  egress:
+  - ports:
+    - port: 53
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+##############################################
+ 988  kubectl apply -f default-deny.yml
+  989  kubectl get networkpolicy
+  990  kubectl describe networkpolicy default-deny
+  991  kubectl exec frontend -- curl backend
