@@ -34,3 +34,63 @@ kubectl apply -f default-deny.yml
 ingress and egress 
 from frontend to backend ingress
 backend to frontend it will acccept the connection egress
+########lets create an egress routing between frontend to backend
+ 963  vi frontend.yml
+########################################################
+##this policy will create an egress rule between frontend to backend
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      run: frontend
+  policyTypes:
+
+  - Egress
+  egress:
+  - to:
+     -  podSelector:
+          matchLabels:
+            run: backend
+
+##########################################################
+  964  kubectl apply -f frontend.yml
+  965  kubectl get networkpolicy
+ 
+  967  kubectl describe networkpolicy frontend
+##they below mentioned will not work as we have disable all the port communication we need to open DNS service in the deny rule
+  968  kubectl exec frontend -- curl backend
+  ###to do the communcation we will use the pod ip address
+  970  kubectl get pod -o wide
+####this will also not work as we can send the traffic from frontend due to egress routing but the backend need to accept it
+  971  kubectl exec frontend -- curl 192.168.1.22
+###for backend to accept the traffice we need to create an ingress routing where backend will do communcation to frontend using from
+972  vi backend.yml
+####################################
+##this policy will create an ingress rule between backend to frontend
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      run: backend
+  policyTypes:
+
+  - Ingress
+  ingress:
+  - from:
+     -  podSelector:
+          matchLabels:
+            run: frontend
+###########################################################
+  973  kubectl apply -f backend.yml
+  974  kubectl get networkpolicy
+  976  kubectl describe networkpolicy backend
+###the below mentioned will work due to ingress routing
+  977  kubectl exec frontend -- curl 192.168.1.22
