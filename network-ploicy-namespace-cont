@@ -28,3 +28,35 @@ status:
  1001  kubectl exec backend -- curl 192.168.1.27
 ##still not work (as we have denied everything)
 
+we will create an rule in backend.yml 
+################################################
+ 1007  vi backend.yml
+ 1008  kubectl apply -f backend.yml
+ 1009  kubectl exec backend -- curl 192.168.1.27
+##this policy will cupdate rule between backend to casasndra namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      run: backend
+  policyTypes:
+  - Egress
+  - Ingress
+  ingress:
+  - from:
+     -  podSelector:
+          matchLabels:
+            run: frontend
+####add the egress rule to the namespace cassandra
+  egress:
+  - to:
+     -  namespaceSelector:
+          matchLabels:
+            ns: cassandra
+###then test it 
+ 1008  kubectl apply -f backend.yml
+ 1009  kubectl exec backend -- curl 192.168.1.27
