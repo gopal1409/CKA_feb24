@@ -26,7 +26,7 @@ crictl ps
 ## =================================================
 kubeadm completion bash > kubeadm.sh && echo source /etc/bash_completion >> ~/.bashrc && echo source kubeadm.sh >> ~/.bashrc
 source ~/.bashrc
-kubeadm init --apiserver-advertise-address hostname -i | awk '{print $1}' --pod-network-cidr 10.10.0.0/16 --service-cidr 20.20.0.0/16 --service-dns-domain thinknyx.org
+kubeadm init --pod-network-cidr=192.168.0.0/16
 echo export KUBECONFIG=/etc/kubernetes/admin.conf >> ~/.bashrc && source ~/.bashrc && crictl ps
 apt-get install -y kubectl && kubectl get nodes
 
