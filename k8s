@@ -20,7 +20,7 @@ echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.i
 
 apt-get update && apt-get install kubeadm kubelet cri-o -y
 
-kubeadm version && kubelet version && crio --version
+kubeadm version && kubelet --version && crio --version
 systemctl start crio.service
 crictl ps
 ## =================================================
